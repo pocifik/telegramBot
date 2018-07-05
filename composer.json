@@ -1,0 +1,17 @@
+{
+  "name": "pocifik/telegrambot",
+  "description": "PHP Telegram Bot API",
+  "type": "library",
+  "authors": [
+    {
+      "name": "pocifik",
+      "email": "pocific.i@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": { "telegramBot\\": "src" }
+  }
+}
