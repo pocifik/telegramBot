@@ -2,6 +2,7 @@
   "name": "pocifik/telegrambot",
   "description": "PHP Telegram Bot API",
   "type": "library",
+  "license": "MIT",
   "authors": [
     {
       "name": "pocifik",
