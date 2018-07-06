@@ -5,7 +5,8 @@ namespace telegramBot;
 class Telegram {
 
     private static $_telegramServer;
-    private static $url;
+
+    private static $url = 'https://api.telegram.org/bot';
     private static $proxy;
 
     private function __construct () {}

@@ -2,19 +2,43 @@
 
 namespace telegramBot;
 
+use telegramBot\enums\RequestType;
+use telegramBot\models\Chat;
+use telegramBot\models\Message;
+use telegramBot\models\User;
+
 class TelegramServer
 {
-    protected $url = 'https://api.telegram.org/bot';
+    protected $url;
     protected $proxy;
 
     protected $array_data;
 
-    public function __construct($token, $proxy = null)
-    {
-        $this->url  .= $token.'/';
-        $this->proxy = $proxy;
+    protected $chat;
+    protected $message;
 
-        $this->getData();
+    protected $type;
+
+    public function __construct($url, $proxy = null)
+    {
+        $this->url   = $url;
+        $this->proxy = $proxy;
+    }
+
+    /**
+     * @return Chat
+     */
+    public function getChat()
+    {
+        return $this->chat;
+    }
+
+    /**
+     * @return Message
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 
     public function sendRequest($method, $content)
@@ -45,11 +69,48 @@ class TelegramServer
         return json_decode($result, true);
     }
 
-    protected function getData()
+    public function getData()
     {
         if (empty($this->array_data)) {
             $data = file_get_contents('php://input');
             $this->array_data = json_decode($data, true);
+
+            $this->parseArray();
+        }
+    }
+
+    protected function parseArray()
+    {
+        if (key_exists('message', $this->array_data)) {
+            $message_array = $this->array_data['message'];
+
+            $chat = new Chat();
+            $chat->id   = $message_array['chat']['id'];
+            $chat->type = $message_array['chat']['type'];
+
+            if (key_exists('from', $message_array)) {
+                $from = new User();
+                $from->id             = $message_array['from']['id'];
+                $from->is_bot         = $message_array['from']['is_bot'];
+                $from->first_name     = $message_array['from']['first_name'];
+                $from->last_name      = $message_array['from']['last_name']     ?? null;
+                $from->username       = $message_array['from']['username']      ?? null;
+                $from->language_code  = $message_array['from']['language_code'] ?? null;
+            }
+
+            $message = new Message();
+            $message->message_id = $message_array['message_id'];
+            $message->date       = $message_array['date'];
+            $message->text       = $message_array['text'] ?? null;
+            $message->chat       = $chat;
+            if (isset($from))
+                $message->from = $from;
+
+            $this->type    = RequestType::MESSAGE;
+            $this->message = $message;
+            $this->chat    = $chat;
+
+            return;
         }
     }
 }
