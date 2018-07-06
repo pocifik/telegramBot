@@ -50,7 +50,7 @@ class Message
 
         $content['chat_id']      = $this->chat->id ?? $telegramServer->getChat()->id;
         $content['text']         = $this->text;
-        $content['reply_markup'] = json_encode($reply_markup);
+        $content['reply_markup'] = (array)$reply_markup;
 
         $telegramServer->sendRequest('sendMessage', $content);
     }
