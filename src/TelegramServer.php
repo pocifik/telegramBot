@@ -41,6 +41,14 @@ class TelegramServer
         return $this->message;
     }
 
+    /**
+     * @return RequestType
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
     public function sendRequest($method, $content)
     {
         $url = $this->url.$method;
