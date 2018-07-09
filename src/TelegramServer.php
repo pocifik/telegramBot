@@ -2,8 +2,10 @@
 
 namespace telegramBot;
 
+use telegramBot\enums\MessageType;
 use telegramBot\enums\RequestType;
 use telegramBot\models\Chat;
+use telegramBot\models\Contact;
 use telegramBot\models\Message;
 use telegramBot\models\User;
 
@@ -106,13 +108,29 @@ class TelegramServer
                 $from->language_code  = $message_array['from']['language_code'] ?? null;
             }
 
+            if (key_exists('contact', $message_array)) {
+                $contact = new Contact();
+                $contact->phone_number = $message_array['contact']['phone_number'];
+                $contact->first_name   = $message_array['contact']['first_name'];
+                $contact->last_name    = $message_array['contact']['last_name'] ?? null;
+                $contact->user_id      = $message_array['contact']['user_id']   ?? null;
+            }
+
             $message = new Message();
             $message->message_id = $message_array['message_id'];
             $message->date       = $message_array['date'];
-            $message->text       = $message_array['text'] ?? null;
             $message->chat       = $chat;
-            if (isset($from))
+            if (isset($message_array['text'])) {
+                $message->text = $message_array['text'];
+                $message->message_type = MessageType::TEXT;
+            }
+            if (isset($from)) {
                 $message->from = $from;
+            }
+            if (isset($contact)) {
+                $message->contact = $contact;
+                $message->message_type = MessageType::CONTACT;
+            }
 
             $this->type    = RequestType::MESSAGE;
             $this->message = $message;

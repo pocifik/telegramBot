@@ -2,6 +2,7 @@
 
 namespace telegramBot\models;
 
+use telegramBot\enums\MessageType;
 use telegramBot\Telegram;
 
 class Message
@@ -23,9 +24,18 @@ class Message
      */
     public $chat;
     /**
-     * @var string Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters.
+     * @var string Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters
      */
     public $text;
+    /**
+     * @var Contact Optional. Message is a shared contact, information about the contact
+     */
+    public $contact;
+
+    /**
+     * @var MessageType Type of Message.
+     */
+    public $message_type;
 
     public function sendMessage($text = null)
     {
@@ -50,7 +60,7 @@ class Message
 
         $content['chat_id']      = $this->chat->id ?? $telegramServer->getChat()->id;
         $content['text']         = $this->text;
-        $content['reply_markup'] = (array)$reply_markup;
+        $content['reply_markup'] = json_encode($reply_markup, true);
 
         $telegramServer->sendRequest('sendMessage', $content);
     }
