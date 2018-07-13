@@ -37,7 +37,11 @@ class Message
      */
     public $message_type;
 
-    public function sendMessage($text = null)
+    /**
+     * @param $text string
+     * @param $parse_mode string
+     */
+    public function sendMessage($text = null, $parse_mode = null)
     {
         $this->text = $text ?? $this->text;
 
@@ -45,14 +49,17 @@ class Message
 
         $content['chat_id'] = $this->chat->id ?? $telegramServer->getChat()->id;
         $content['text']    = $this->text;
+        if (!is_null($parse_mode))
+            $content['parse_mod'] = $parse_mode;
         $telegramServer->sendRequest('sendMessage', $content);
     }
 
     /**
      * @param $reply_markup ReplyKeyboardMarkup
-     * @param $text string
+     * @param $text string string
+     * @param $parse_mode string
      */
-    public function sendKeyboard($reply_markup, $text = null)
+    public function sendKeyboard($reply_markup, $text = null, $parse_mode = null)
     {
         $this->text = $text ?? $this->text;
 
@@ -61,6 +68,8 @@ class Message
         $content['chat_id']      = $this->chat->id ?? $telegramServer->getChat()->id;
         $content['text']         = $this->text;
         $content['reply_markup'] = json_encode($reply_markup, true);
+        if (!is_null($parse_mode))
+            $content['parse_mod'] = $parse_mode;
 
         $telegramServer->sendRequest('sendMessage', $content);
     }
