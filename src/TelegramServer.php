@@ -4,6 +4,7 @@ namespace telegramBot;
 
 use telegramBot\enums\MessageType;
 use telegramBot\enums\RequestType;
+use telegramBot\models\CallbackQuery;
 use telegramBot\models\Chat;
 use telegramBot\models\Contact;
 use telegramBot\models\Message;
@@ -18,6 +19,7 @@ class TelegramServer
 
     protected $chat;
     protected $message;
+    protected $callback_query;
 
     protected $type;
 
@@ -41,6 +43,14 @@ class TelegramServer
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * @return Message
+     */
+    public function getCallBackQuery()
+    {
+        return $this->callback_query;
     }
 
     /**
@@ -135,7 +145,18 @@ class TelegramServer
             $this->type    = RequestType::MESSAGE;
             $this->message = $message;
             $this->chat    = $chat;
+            return;
+        }
+        else if (key_exists('callback_query', $this->array_data)) {
+            $callback_query_array = $this->array_data['callback_query'];
 
+            $callback_query = new CallbackQuery();
+            foreach ($callback_query_array as $key => $value) {
+                $callback_query->$key = $value;
+            }
+
+            $this->type           = RequestType::CALLBACK_QUERY;
+            $this->callback_query = $callback_query;
             return;
         }
     }
