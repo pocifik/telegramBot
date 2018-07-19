@@ -50,12 +50,12 @@ class Message
         $content['chat_id'] = $this->chat->id ?? $telegramServer->getChat()->id;
         $content['text']    = $this->text;
         if (!is_null($parse_mode))
-            $content['parse_mod'] = $parse_mode;
+            $content['parse_mode'] = $parse_mode;
         $telegramServer->sendRequest('sendMessage', $content);
     }
 
     /**
-     * @param $reply_markup ReplyKeyboardMarkup
+     * @param $reply_markup ReplyKeyboardMarkup|InlineKeyboardMarkup
      * @param $text string string
      * @param $parse_mode string
      */
@@ -69,7 +69,7 @@ class Message
         $content['text']         = $this->text;
         $content['reply_markup'] = json_encode($reply_markup, true);
         if (!is_null($parse_mode))
-            $content['parse_mod'] = $parse_mode;
+            $content['parse_mode'] = $parse_mode;
 
         $telegramServer->sendRequest('sendMessage', $content);
     }
