@@ -47,7 +47,7 @@ class Message
 
         $telegramServer = Telegram::getTelegramServer();
 
-        $content['chat_id'] = $this->chat->id ?? $telegramServer->getChat()->id;
+        $content['chat_id'] = $this->chat->id ?? $telegramServer->to_id;
         $content['text']    = $this->text;
         if (!is_null($parse_mode))
             $content['parse_mode'] = $parse_mode;
@@ -65,7 +65,7 @@ class Message
 
         $telegramServer = Telegram::getTelegramServer();
 
-        $content['chat_id']      = $this->chat->id ?? $telegramServer->getChat()->id;
+        $content['chat_id']      = $this->chat->id ?? $telegramServer->to_id;
         $content['text']         = $this->text;
         $content['reply_markup'] = json_encode($reply_markup, true);
         if (!is_null($parse_mode))

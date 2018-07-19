@@ -23,6 +23,8 @@ class TelegramServer
 
     protected $type;
 
+    public $to_id;
+
     public function __construct($url, $proxy = null)
     {
         $this->url   = $url;
@@ -102,62 +104,106 @@ class TelegramServer
     protected function parseArray()
     {
         if (key_exists('message', $this->array_data)) {
-            $message_array = $this->array_data['message'];
-
-            $chat = new Chat();
-            $chat->id   = $message_array['chat']['id'];
-            $chat->type = $message_array['chat']['type'];
-
-            if (key_exists('from', $message_array)) {
-                $from = new User();
-                $from->id             = $message_array['from']['id'];
-                $from->is_bot         = $message_array['from']['is_bot'];
-                $from->first_name     = $message_array['from']['first_name'];
-                $from->last_name      = $message_array['from']['last_name']     ?? null;
-                $from->username       = $message_array['from']['username']      ?? null;
-                $from->language_code  = $message_array['from']['language_code'] ?? null;
-            }
-
-            if (key_exists('contact', $message_array)) {
-                $contact = new Contact();
-                $contact->phone_number = $message_array['contact']['phone_number'];
-                $contact->first_name   = $message_array['contact']['first_name'];
-                $contact->last_name    = $message_array['contact']['last_name'] ?? null;
-                $contact->user_id      = $message_array['contact']['user_id']   ?? null;
-            }
-
-            $message = new Message();
-            $message->message_id = $message_array['message_id'];
-            $message->date       = $message_array['date'];
-            $message->chat       = $chat;
-            if (isset($message_array['text'])) {
-                $message->text = $message_array['text'];
-                $message->message_type = MessageType::TEXT;
-            }
-            if (isset($from)) {
-                $message->from = $from;
-            }
-            if (isset($contact)) {
-                $message->contact = $contact;
-                $message->message_type = MessageType::CONTACT;
-            }
+            $message = $this->parseMessage($this->array_data['message']);
 
             $this->type    = RequestType::MESSAGE;
             $this->message = $message;
-            $this->chat    = $chat;
+            $this->chat    = $message->chat;
+            $this->to_id   = $message->chat->id;
             return;
         }
         else if (key_exists('callback_query', $this->array_data)) {
-            $callback_query_array = $this->array_data['callback_query'];
-
-            $callback_query = new CallbackQuery();
-            foreach ($callback_query_array as $key => $value) {
-                $callback_query->$key = $value;
-            }
+            $callback_query = $this->parseCallbackQuery($this->array_data['callback_query']);
 
             $this->type           = RequestType::CALLBACK_QUERY;
             $this->callback_query = $callback_query;
+            $this->to_id          = $callback_query->from->id;
             return;
         }
+    }
+
+    protected function parseCallbackQuery($callback_query_array)
+    {
+        if (key_exists('from', $callback_query_array)) {
+            $from = $this->parseUser($callback_query_array['from']);
+        }
+        if (key_exists('message', $callback_query_array)) {
+            $message = $this->parseMessage($callback_query_array['message']);
+        }
+
+        $callback_query = new CallbackQuery();
+        $callback_query->id                = $callback_query_array['id'];
+        $callback_query->chat_instance     = $callback_query_array['chat_instance'];
+        $callback_query->inline_message_id = $callback_query_array['inline_message_id'] ?? null;
+        $callback_query->data              = $callback_query_array['data']              ?? null;
+        $callback_query->game_short_name   = $callback_query_array['game_short_name']   ?? null;
+        if (isset($from)) {
+            $callback_query->from = $from;
+        }
+        if (isset($message)) {
+            $callback_query->message = $message;
+        }
+
+        return $callback_query;
+    }
+
+    protected function parseChat($chat_array)
+    {
+        $chat = new Chat();
+        $chat->id   = $chat_array['id'];
+        $chat->type = $chat_array['type'];
+        return $chat;
+    }
+
+    protected function parseUser($user_array)
+    {
+        $user = new User();
+        $user->id             = $user_array['id'];
+        $user->is_bot         = $user_array['is_bot'];
+        $user->first_name     = $user_array['first_name'];
+        $user->last_name      = $user_array['last_name']     ?? null;
+        $user->username       = $user_array['username']      ?? null;
+        $user->language_code  = $user_array['language_code'] ?? null;
+        return $user;
+    }
+
+    protected function parseContact($contact_array)
+    {
+        $contact = new Contact();
+        $contact->phone_number = $contact_array['phone_number'];
+        $contact->first_name   = $contact_array['first_name'];
+        $contact->last_name    = $contact_array['last_name'] ?? null;
+        $contact->user_id      = $contact_array['user_id']   ?? null;
+        return $contact;
+    }
+
+    protected function parseMessage($message_array)
+    {
+        $chat = $this->parseChat($message_array['chat']);
+
+        if (key_exists('from', $message_array)) {
+            $from = $this->parseUser($message_array['from']);
+        }
+
+        if (key_exists('contact', $message_array)) {
+            $contact = $this->parseContact($message_array['contact']);
+        }
+
+        $message = new Message();
+        $message->message_id = $message_array['message_id'];
+        $message->date       = $message_array['date'];
+        $message->chat       = $chat;
+        if (isset($message_array['text'])) {
+            $message->text = $message_array['text'];
+            $message->message_type = MessageType::TEXT;
+        }
+        if (isset($from)) {
+            $message->from = $from;
+        }
+        if (isset($contact)) {
+            $message->contact = $contact;
+            $message->message_type = MessageType::CONTACT;
+        }
+        return $message;
     }
 }
