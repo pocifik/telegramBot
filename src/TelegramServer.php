@@ -48,7 +48,7 @@ class TelegramServer
     }
 
     /**
-     * @return Message
+     * @return CallbackQuery
      */
     public function getCallBackQuery()
     {
