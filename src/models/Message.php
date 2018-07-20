@@ -55,7 +55,7 @@ class Message
     }
 
     /**
-     * @param $reply_markup ReplyKeyboardMarkup|InlineKeyboardMarkup
+     * @param $reply_markup ReplyKeyboardMarkup|InlineKeyboardMarkup|ReplyKeyboardRemove
      * @param $text string string
      * @param $parse_mode string
      */
