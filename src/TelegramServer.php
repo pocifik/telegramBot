@@ -63,6 +63,14 @@ class TelegramServer
         return $this->type;
     }
 
+    /**
+     * @return array
+     */
+    public function getArrayData()
+    {
+        return $this->array_data;
+    }
+
     public function sendRequest($method, $content)
     {
         $url = $this->url.$method;
