@@ -7,6 +7,7 @@ use telegramBot\enums\RequestType;
 use telegramBot\models\CallbackQuery;
 use telegramBot\models\Chat;
 use telegramBot\models\Contact;
+use telegramBot\models\InputMediaPhoto;
 use telegramBot\models\Message;
 use telegramBot\models\User;
 
@@ -97,6 +98,16 @@ class TelegramServer
         curl_close($ch);
 
         return json_decode($result, true);
+    }
+
+    /**
+     * @param $mediaInputs InputMediaPhoto[]
+     */
+    public function sendMediaGroup($mediaInputs)
+    {
+        $content['chat_id'] = $this->to_id;
+        $content['media'] = json_encode($mediaInputs, true);
+        $this->sendRequest('sendMediaGroup', $content);
     }
 
     public function getData()
