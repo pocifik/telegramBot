@@ -122,6 +122,9 @@ class TelegramServer
 
     protected function parseArray()
     {
+        if (!is_array($this->array_data)) {
+            return;
+        }
         if (key_exists('message', $this->array_data)) {
             $message = $this->parseMessage($this->array_data['message']);
 
