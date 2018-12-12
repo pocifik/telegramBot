@@ -110,14 +110,26 @@ class TelegramServer
         $this->sendRequest('sendMediaGroup', $content);
     }
 
+    /**
+     * @param $photo string
+     */
+    public function sendPhoto($photo)
+    {
+        $content['chat_id'] = $this->to_id;
+        $content['photo'] = json_encode($photo, true);
+        $this->sendRequest('sendPhoto', $content);
+    }
+
     public function getData()
     {
         if (empty($this->array_data)) {
             $data = file_get_contents('php://input');
+            if (empty($data))
+                return false;
             $this->array_data = json_decode($data, true);
-
             $this->parseArray();
         }
+        return true;
     }
 
     protected function parseArray()
