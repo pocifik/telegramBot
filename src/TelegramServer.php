@@ -102,22 +102,24 @@ class TelegramServer
 
     /**
      * @param $mediaInputs InputMediaPhoto[]
+     * @return array
      */
     public function sendMediaGroup($mediaInputs)
     {
         $content['chat_id'] = $this->to_id;
         $content['media'] = json_encode($mediaInputs, true);
-        $this->sendRequest('sendMediaGroup', $content);
+        return $this->sendRequest('sendMediaGroup', $content);
     }
 
     /**
      * @param $photo string
+     * @return array
      */
     public function sendPhoto($photo)
     {
         $content['chat_id'] = $this->to_id;
         $content['photo'] = json_encode($photo, true);
-        $this->sendRequest('sendPhoto', $content);
+        return $this->sendRequest('sendPhoto', $content);
     }
 
     public function getData()

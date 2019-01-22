@@ -40,6 +40,7 @@ class Message
     /**
      * @param $text string
      * @param $parse_mode string
+     * @return array
      */
     public function sendMessage($text = null, $parse_mode = null)
     {
@@ -51,13 +52,14 @@ class Message
         $content['text']    = $this->text;
         if (!is_null($parse_mode))
             $content['parse_mode'] = $parse_mode;
-        $telegramServer->sendRequest('sendMessage', $content);
+        return $telegramServer->sendRequest('sendMessage', $content);
     }
 
     /**
      * @param $reply_markup ReplyKeyboardMarkup|InlineKeyboardMarkup|ReplyKeyboardRemove
      * @param $text string string
      * @param $parse_mode string
+     * @return array
      */
     public function sendKeyboard($reply_markup, $text = null, $parse_mode = null)
     {
@@ -71,6 +73,6 @@ class Message
         if (!is_null($parse_mode))
             $content['parse_mode'] = $parse_mode;
 
-        $telegramServer->sendRequest('sendMessage', $content);
+        return $telegramServer->sendRequest('sendMessage', $content);
     }
 }
