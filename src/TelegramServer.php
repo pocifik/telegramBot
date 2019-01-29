@@ -106,8 +106,9 @@ class TelegramServer
      */
     public function sendMediaGroup($mediaInputs)
     {
+        $content = [];
         $content['chat_id'] = $this->to_id;
-        $content['media'] = json_encode($mediaInputs, true);
+        $content['media'] = json_encode($mediaInputs, JSON_OBJECT_AS_ARRAY);
         return $this->sendRequest('sendMediaGroup', $content);
     }
 
@@ -117,8 +118,9 @@ class TelegramServer
      */
     public function sendPhoto($photo)
     {
+        $content = [];
         $content['chat_id'] = $this->to_id;
-        $content['photo'] = json_encode($photo, true);
+        $content['photo'] = json_encode($photo, JSON_OBJECT_AS_ARRAY);
         return $this->sendRequest('sendPhoto', $content);
     }
 

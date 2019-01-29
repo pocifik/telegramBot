@@ -2,7 +2,6 @@
 
 namespace telegramBot\models;
 
-use telegramBot\enums\MessageType;
 use telegramBot\Telegram;
 
 class Message
@@ -33,7 +32,7 @@ class Message
     public $contact;
 
     /**
-     * @var MessageType Type of Message.
+     * @var string Type of Message.
      */
     public $message_type;
 
@@ -48,6 +47,7 @@ class Message
 
         $telegramServer = Telegram::getTelegramServer();
 
+        $content = [];
         $content['chat_id'] = $this->chat->id ?? $telegramServer->to_id;
         $content['text']    = $this->text;
         if (!is_null($parse_mode))
@@ -67,9 +67,10 @@ class Message
 
         $telegramServer = Telegram::getTelegramServer();
 
+        $content = [];
         $content['chat_id']      = $this->chat->id ?? $telegramServer->to_id;
         $content['text']         = $this->text;
-        $content['reply_markup'] = json_encode($reply_markup, true);
+        $content['reply_markup'] = json_encode($reply_markup, JSON_OBJECT_AS_ARRAY);
         if (!is_null($parse_mode))
             $content['parse_mode'] = $parse_mode;
 
