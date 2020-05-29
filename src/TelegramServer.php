@@ -116,11 +116,17 @@ class TelegramServer
      * @param $photo string
      * @return array
      */
-    public function sendPhoto($photo)
+    public function sendPhoto($photo, $text = null, $parse_mode = null)
     {
         $content = [];
         $content['chat_id'] = $this->to_id;
         $content['photo'] = json_encode($photo, JSON_OBJECT_AS_ARRAY);
+        if (!is_null($text)) {
+            $content['caption'] = $text;
+        }
+        if (!is_null($parse_mode)) {
+            $content['parse_mode'] = $parse_mode;
+        }
         return $this->sendRequest('sendPhoto', $content);
     }
 
