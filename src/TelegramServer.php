@@ -120,7 +120,7 @@ class TelegramServer
     {
         $content = [];
         $content['chat_id'] = $this->to_id;
-        $content['photo'] = json_encode($photo, JSON_OBJECT_AS_ARRAY);
+        $content['photo'] = $photo;
         if (!is_null($text)) {
             $content['caption'] = $text;
         }
